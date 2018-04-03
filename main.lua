@@ -24,6 +24,8 @@ local randomOperation = 0
 local numericField
 local scoreText
 local score = 0
+local answerDivision = 0
+local SquareRoot
 
 
 local clockText
@@ -40,11 +42,16 @@ local incorrectObject
 
 local GameOver = display.newImageRect("Images/gameOver.png",500,500)
  GameOver.isVisible = false
- GameOver.X = display.contentWidth/2
- GameOver.Y = display.contentHeight/2
 
- local scoreText
+ local YouWin = display.newImageRect("Images/YouWin.jpg",1999,1999)
+ YouWin.isVisible = false
 
+local GameOverSound = audio.loadSound("Sounds/Game Over Sound Effect.mp3")
+local GameOverSoundChannel
+
+local FreeMusic = audio.loadSound("Sounds/bensound-acousticbreeze.mp3")
+local FreeMusicChannel
+FreeMusicChannel = audio.play(FreeMusic)
 
    -- create the lives to display on the screen
 heart1 = display.newImageRect("Images/heart.png", 100,100)
@@ -63,138 +70,8 @@ heart4 = display.newImageRect("images/heart.png", 100, 100)
 heart4.x =  display.contentWidth * 4 / 8
 heart4.y = display.contentHeight * 1 / 7
 
-
-
-
- -- create the incorrect text object and make it invisible
-     incorrectObject = display.newText( "Incorrect", display.contentWidth/2, display.contentHeight*2/3,nil,50)
-     incorrectObject.isVisible = false
-     incorrectObject:setTextColor(100/255, 180/255, 19/255)
-
-     --create the correct text object and make it invisible
-     correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*2/3,nil,50)
-     correctObject.isVisible = false
-     correctObject:setTextColor(180/255,120/255,100/255)
-
-
-     -- displays a question and sets the colour 
-     questionObject = display.newText("" , display.contentWidth/3, display.contentHeight/2, nil, 40)
-     questionObject:setTextColor(155/255, 0/255, 0/255)
-
-      clockText = display.newText("TimeLeft:" .. secondsLeft,500,600,nil,40)
-    clockText:setTextColor(155/255,180/255,1/255)
-
-
- local function AskQuestion()
-
-    -- program chooses a random number betweer 1-3
-      randomOperation = math.random(1,4)
-    -- generate 2 random numbers between a max. and a min. number
-    randomNumber1 = math.random(0,25)
-    randomNumber2 = math.random(0,21)
-    randomNumber3 = math.random(0,10)
-    randomNumber4 = math.random(0,10)
-    randomNumber5 = math.random(1,100)
-    randomNumber6 = math.random(1,100)
-    
-    if ( randomOperation == 1) then correctAnswer = randomNumber1 + randomNumber2
-     
-    --create question in text object
-    questionObject.text = randomNumber1 .. " + " .. randomNumber2 .. " = "
-    end
-
-    if (randomOperation == 2) then correctAnswer = randomNumber1 - randomNumber2
-    --create question in text object
-    questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
-     
-end
-
-if ((correctAnswer < 0) and (randomOperation == 2)) then
-        correctAnswer = randomNumber2 - randomNumber1
-        questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
-        end
-
-if (randomOperation == 3) then correctAnswer = randomNumber3 * randomNumber4
-    --create question in text object
-    questionObject.text = randomNumber3 .. " * " .. randomNumber4 .. " = "
-end
-if (randomOperation == 4) then correctAnswer = randomNumber5 / randomNumber6
-	-- create the question in text object
-questionObject.text = randomNumber5 .. " / " .. randomNumber6 .. " = " 
-end
-end
- 
-
-local function HideCorrect()
-    correctObject.isVisible = false
-    AskQuestion()
-end
-
-local function HideIncorrect()
-    incorrectObject.isVisible = false
-    AskQuestion()
-end
-
-
-
-
-local function UpdateTime( )
-
--- decrement the number of Seconds
-secondsLeft = secondsLeft - 1
-clockText.text = ("TimeLeft:" .. secondsLeft)
-
-if (secondsLeft == 0) then 
-    -- reset the number of seconds left in the clock object
-    secondsLeft = totalSeconds
-    lives = lives - 1
-
-end
-
-end
--- create a countdown timer that loops infinitely
-local countDownTimer = timer.performWithDelay( 1000, UpdateTime,0)
-
-local function StopTimer()
-	 if (lives == 0) then
-		  --stop the timer
-     timer.cancel(countDownTimer)
- end
-end
-
-     
-    
-
-
-local function NumericFieldListener( event )
-
-    --User begins editing "numericField"
-    if ( event.phase == "began" ) then
-
-        --clear text field
-        event.target.text = ""
-
-        elseif event.phase == "submitted" then 
-            --when the answer is submitted (enter key is pressed) set user input to user's answer
-            userAnswer = tonumber(event.target.text)
-
-            --if the users answer and the correct answer are the same:
-            if (userAnswer == correctAnswer) then
-                correctObject.isVisible = true
-                timer.performWithDelay(1000,HideCorrect)
-                secondsLeft = totalSeconds
-                score = score + 1
-		        scoreText.text = ("score:" .. score)
-
-                else
-                incorrectObject.isVisible = true
-                timer.performWithDelay(1000,HideIncorrect)
-                lives = lives - 1
-                secondsLeft = totalSeconds
-            end
-    --clear text field
-        event.target.text = ""
-       if (lives == 4) then
+local function UpdateHearts()
+    if (lives == 4) then
     heart4.isVisible = true
     heart3.isVisible = true 
     heart2.isVisible = true
@@ -226,12 +103,161 @@ local function NumericFieldListener( event )
     heart1.isVisible = false
     --show image
     GameOver.isVisible = true
-    -- stop timer
-    StopTimer()
- 
+end
+end
+
+
+
+ -- create the incorrect text object and make it invisible
+     incorrectObject = display.newText( "Incorrect", display.contentWidth/2, display.contentHeight*2/3,nil,50)
+     incorrectObject.isVisible = false
+     incorrectObject:setTextColor(100/255, 180/255, 19/255)
+
+     --create the correct text object and make it invisible
+     correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*2/3,nil,50)
+     correctObject.isVisible = false
+     correctObject:setTextColor(180/255,120/255,100/255)
+
+
+     -- displays a question and sets the colour 
+     questionObject = display.newText("" , display.contentWidth/3, display.contentHeight/2, nil, 40)
+     questionObject:setTextColor(155/255, 0/255, 0/255)
+
+      clockText = display.newText("TimeLeft:" .. secondsLeft,500,600,nil,40)
+    clockText:setTextColor(155/255,180/255,1/255)
+
+
+ local function AskQuestion()
+
+    -- program chooses a random number betweer 1-3
+      randomOperation = math.random(1,5)
+    -- generate 2 random numbers between a max. and a min. number
+    randomNumber1 = math.random(0,25)
+    randomNumber2 = math.random(0,21)
+    randomNumber3 = math.random(0,10)
+    randomNumber4 = math.random(0,10)
+    randomNumber5 = math.random(50,100)
+    randomNumber6 = math.random(1,25)
+    randomNumber7 = math.random(3,9)
+    
+    if ( randomOperation == 1) then correctAnswer = randomNumber1 + randomNumber2
+     
+    --create question in text object
+    questionObject.text = randomNumber1 .. " + " .. randomNumber2 .. " = "
     end
+
+    if (randomOperation == 2) then correctAnswer = randomNumber1 - randomNumber2
+    --create question in text object
+    questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
+     
+end
+
+if ((correctAnswer < 0) and (randomOperation == 2)) then
+        correctAnswer = randomNumber2 - randomNumber1
+        questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
+        end
+
+if (randomOperation == 3) then correctAnswer = randomNumber3 * randomNumber4
+    --create question in text object
+    questionObject.text = randomNumber3 .. " * " .. randomNumber4 .. " = "
+end
+if (randomOperation == 4) then answerDivision = randomNumber5 / randomNumber6
+correctAnswer = math.ceil(answerDivision)
+
+    -- create the question in text object
+questionObject.text = randomNumber5 .. " / " .. randomNumber6 .. " = " 
+end
+if (randomOperation == 5) then SquareRoot = math.sqrt(randomNumber7)
+    correctAnswer = math.ceil(SquareRoot)
+    questionObject.text = "sqrt of" .. randomNumber7 .. " = "
 end
 end
+
+
+ 
+
+local function HideCorrect()
+    correctObject.isVisible = false
+    AskQuestion()
+end
+
+local function HideIncorrect()
+    incorrectObject.isVisible = false
+    AskQuestion()
+end
+
+
+
+
+
+local function UpdateTime()
+
+-- decrement the number of Seconds
+secondsLeft = secondsLeft - 1
+clockText.text = ("TimeLeft:" .. secondsLeft)
+
+if (secondsLeft == 0) then 
+    -- reset the number of seconds left in the clock object
+    secondsLeft = totalSeconds
+    lives = lives - 1
+    AskQuestion()
+    UpdateHearts()
+end
+end
+-- create a countdown timer that loops infinitely
+local countDownTimer = timer.performWithDelay( 1000, UpdateTime,0)
+
+local function StopTimer()
+		  --stop the timer
+     timer.cancel(countDownTimer)
+ end
+ 
+
+
+     
+    
+
+
+local function NumericFieldListener( event )
+
+    --User begins editing "numericField"
+    if ( event.phase == "began" ) then
+
+        --clear text field
+        event.target.text = ""
+
+        elseif event.phase == "submitted" then 
+            --when the answer is submitted (enter key is pressed) set user input to user's answer
+            userAnswer = tonumber(event.target.text)
+
+            --if the users answer and the correct answer are the same:
+            if (userAnswer == correctAnswer) then
+                correctObject.isVisible = true
+                timer.performWithDelay(1000,HideCorrect)
+                secondsLeft = totalSeconds
+                score = score + 1
+		        scoreText.text = ("score:" .. score)
+
+                else
+                incorrectObject.isVisible = true
+                timer.performWithDelay(1000,HideIncorrect)
+                lives = lives - 1
+                secondsLeft = totalSeconds
+                UpdateHearts()
+            end
+            if (score == 5) then
+                 YouWin.isVisible = true
+    --clear text field
+        event.target.text = ""
+end
+if (lives == 0) then 
+    StopTimer()
+    audio.stop(FreeMusicChannel)
+    GameOverSoundChannel = audio.play(GameOverSound)
+end
+end
+end
+
     
 
 
