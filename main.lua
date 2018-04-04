@@ -1,9 +1,9 @@
 -- Title: Lives&Timers
 -- Name: Tristan Royer
 -- Course: Ics2O/3C
---
+-- This program asks the user a varity of math questions
 
---
+-- sets the background to a different colour
 display.setDefault("background",100/255,16/255,180/255)
 
 --hide status bar
@@ -20,7 +20,7 @@ local randomNumber4 = 0
 local userAnswer
 local correctAnswer = 0
 local incorrectObject
-local randomOperation = 0
+local randomOperation = 0-
 local numericField
 local scoreText
 local score = 0
@@ -40,6 +40,7 @@ local heart4
 
 local incorrectObject
 
+-- Creates background images for Win and lose and hides them
 local GameOver = display.newImageRect("Images/gameOver.png",1200,1400)
 GameOver.x = display.contentCenterX
 GameOver.y = display.contentCenterY
@@ -48,10 +49,9 @@ GameOver.isVisible = false
  local YouWin = display.newImageRect("Images/YouWin.jpg",1200,1400)
 YouWin.x = display.contentCenterX
 YouWin.y = display.contentCenterY
+YouWin.isVisible = false
 
- YouWin.isVisible = false
-
-
+-- loads sounds
 local GameOverSound = audio.loadSound("Sounds/Game Over Sound Effect.mp3")
 local GameOverSoundChannel
 
@@ -88,6 +88,7 @@ heart4.y = display.contentHeight * 1 / 7
 
 local function UpdateHearts()
     if (lives == 4) then
+      -- Updates the hearts
     heart4.isVisible = true
     heart3.isVisible = true 
     heart2.isVisible = true
@@ -140,7 +141,7 @@ end
      questionObject:setTextColor(155/255, 0/255, 0/255)
 
     
-
+     -- displays the timer
       clockText = display.newText("TimeLeft:" .. secondsLeft,500,600,nil,40)
     clockText:setTextColor(155/255,180/255,1/255)
 
@@ -158,6 +159,7 @@ end
     randomNumber6 = math.random(1,25)
     randomNumber7 = math.random(3,9)
     
+    -- asks the user questions based on the random Number chosen by the program
     if ( randomOperation == 1) then correctAnswer = randomNumber1 + randomNumber2
      
     --create question in text object
@@ -167,54 +169,59 @@ end
     end
 
     if (randomOperation == 2) then correctAnswer = randomNumber1 - randomNumber2
-    --create question in text object
+   -- creates the question in text object and changes the text for the Correct answer
     questionObject.text = randomNumber1 .. " - " .. randomNumber2 .. " = "
     CorrectText.text = "The correct answer is:" .. correctAnswer
 end
 
 if ((correctAnswer < 0) and (randomOperation == 2)) then
         correctAnswer = randomNumber2 - randomNumber1
+        -- creates the question in text object and changes the text for the Correct answer
         questionObject.text = randomNumber2 .. " - " .. randomNumber1 .. " = "
         CorrectText.text = "The correct answer is:" .. correctAnswer
         end
 
 if (randomOperation == 3) then correctAnswer = randomNumber3 * randomNumber4
-    --create question in text object
+    -- creates the question in text object and changes the text for the Correct answer
     questionObject.text = randomNumber3 .. " * " .. randomNumber4 .. " = "
     CorrectText.Text = "The correct answer is:" .. correctAnswer
 
 end
 if (randomOperation == 4) then answerDivision = randomNumber5 / randomNumber6
 correctAnswer = math.ceil(answerDivision)
+-- creates the question in text object and changes the text for the Correct answer
 CorrectText.text = "The correct answer is:" .. correctAnswer
--- create the question in text object
 questionObject.text = randomNumber5 .. " / " .. randomNumber6 .. " = " 
 end
 if (randomOperation == 5) then SquareRoot = math.sqrt(randomNumber7)
     correctAnswer = math.ceil(SquareRoot)
+    -- creates the question in text object and changes the text for the Correct answer
     questionObject.text = " sqrt : " .. randomNumber7 .. " = "
     CorrectText.text = "The correct answer is:" .. correctAnswer
 
 end
 end
 
+-- displays the correctAnswer and makes it invisible
  CorrectText = display.newText("The correct answer is:" .. correctAnswer , display.contentWidth/4, display.contentHeight/5, nil, 40)
      questionObject:setTextColor(155/255, 0/255, 0/255)
      CorrectText.isVisible = false
 
 
  
-
+-- hides Correct and asks a new question
 local function HideCorrect()
     correctObject.isVisible = false
     AskQuestion()
 end
 
+-- hides incorrect and asks a new question
 local function HideIncorrect()
     incorrectObject.isVisible = false
     AskQuestion()
 end
 
+-- hides CorrectAnswer and asks a new question
 local function HideCorrectAnswer()
   CorrectText.isVisible = false
 end
@@ -222,7 +229,7 @@ end
 
 
 
-
+-- updates the timer soo that the seconds go down
 local function UpdateTime()
 
 -- decrement the number of Seconds
@@ -232,6 +239,7 @@ clockText.text = ("TimeLeft:" .. secondsLeft)
 if (secondsLeft == 0) then 
     -- reset the number of seconds left in the clock object
     secondsLeft = totalSeconds
+     -- removes a life and asks a new question
     lives = lives - 1
     AskQuestion()
     UpdateHearts()
@@ -250,7 +258,7 @@ local function StopTimer()
      
     
 
-
+-- allows the NumericField to work
 local function NumericFieldListener( event )
 
     --User begins editing "numericField"
@@ -272,7 +280,7 @@ local function NumericFieldListener( event )
 		        scoreText.text = ("score:" .. score)
             CorrectSoundChannel = audio.play(CorrectSound)
             event.target.text = ""
-
+              -- if the user's answer is incorrect
                 else
                 incorrectObject.isVisible = true
                 timer.performWithDelay(1000,HideIncorrect)
@@ -285,11 +293,13 @@ local function NumericFieldListener( event )
                 event.target.text = ""
 
             end
+            -- if the user scores 5 points they win and the win screen is displayed
             if (score == 5) then
                  YouWin.isVisible = true
     --clear text field
         event.target.text = ""
 end
+-- If the user loses all their lives they Lose the game and the Lose screen is displayec
 if (lives == 0) then 
     StopTimer()
     audio.stop(FreeMusicChannel)
@@ -307,6 +317,7 @@ end
      numericField = native.newTextField( 500, 350, 150, 30)
      numericField.inputType = "number"
 
+-- displays the scorer
      	 scoreText = display.newText("score:" .. score, 500,500, nil, 40)
 
 
@@ -317,7 +328,7 @@ end
      -- asks the question
      AskQuestion()
 
-     Runtime:addEventListener("EnterFrame",StopTimer)
+    
   
   
      
