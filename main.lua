@@ -271,6 +271,7 @@ local function NumericFieldListener( event )
                 score = score + 1
 		        scoreText.text = ("score:" .. score)
             CorrectSoundChannel = audio.play(CorrectSound)
+            event.target.text = ""
 
                 else
                 incorrectObject.isVisible = true
@@ -281,6 +282,8 @@ local function NumericFieldListener( event )
                 WrongSoundChannel = audio.play(WrongSound)
                 CorrectText.isVisible = true
                 timer.performWithDelay(1000,HideCorrectAnswer)
+                event.target.text = ""
+
             end
             if (score == 5) then
                  YouWin.isVisible = true
