@@ -20,7 +20,7 @@ local randomNumber4 = 0
 local userAnswer
 local correctAnswer = 0
 local incorrectObject
-local randomOperation = 0-
+local randomOperation = 0
 local numericField
 local scoreText
 local score = 0
@@ -126,12 +126,12 @@ end
 
 
  -- create the incorrect text object and make it invisible
-     incorrectObject = display.newText( "Incorrect", display.contentWidth/2, display.contentHeight*2/3,nil,50)
+     incorrectObject = display.newText( "Incorrect", display.contentWidth/2, display.contentHeight*3/5,nil,50)
      incorrectObject.isVisible = false
      incorrectObject:setTextColor(100/255, 180/255, 19/255)
 
      --create the correct text object and make it invisible
-     correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*2/3,nil,50)
+     correctObject = display.newText( "Correct!", display.contentWidth/2, display.contentHeight*3/5,nil,50)
      correctObject.isVisible = false
      correctObject:setTextColor(180/255,120/255,100/255)
 
@@ -296,10 +296,13 @@ local function NumericFieldListener( event )
             -- if the user scores 5 points they win and the win screen is displayed
             if (score == 5) then
                  YouWin.isVisible = true
+                 StopTimer()
+                 audio.stop(FreeMusicChannel)
+                 YouWinSoundChannel = audio.play(YouWinSound)
     --clear text field
         event.target.text = ""
 end
--- If the user loses all their lives they Lose the game and the Lose screen is displayec
+-- If the user loses all their lives they Lose the game and the Lose screen is displayed
 if (lives == 0) then 
     StopTimer()
     audio.stop(FreeMusicChannel)
