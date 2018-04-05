@@ -32,11 +32,11 @@ local clockText
 local totalSeconds = 10
 local secondsLeft = 10
 
-local lives = 4
+local lives = 3
 local heart1
 local heart2
 local heart3
-local heart4
+
 
 local incorrectObject
 
@@ -82,39 +82,25 @@ heart3 = display.newImageRect("images/heart.png", 100, 100)
 heart3.x =  display.contentWidth * 5 / 8
 heart3.y = display.contentHeight * 1 / 7
 
-heart4 = display.newImageRect("images/heart.png", 100, 100)
-heart4.x =  display.contentWidth * 4 / 8
-heart4.y = display.contentHeight * 1 / 7
 
 local function UpdateHearts()
-    if (lives == 4) then
-      -- Updates the hearts
-    heart4.isVisible = true
-    heart3.isVisible = true 
-    heart2.isVisible = true
-    heart1.isVisible = true   
-    end
-    if (lives == 3) then
-    heart4.isVisible = false 
+    if (lives == 3) then 
     heart3.isVisible = true
     heart2.isVisible = true
     heart1.isVisible = true
     end
     if (lives == 2) then
-    heart4.isVisible = false
     heart3.isVisible = false
     heart2.isVisible = true
     heart1.isVisible = true
     end
     if (lives == 1) then
-    heart4.isVisible = false
     heart3.isVisible = false
     heart2.isVisible = false
     heart1.isVisible = true
     end
 
     if (lives == 0) then
-    heart4.isVisible = false 
     heart3.isVisible = false
     heart2.isVisible = false
     heart1.isVisible = false
@@ -144,6 +130,11 @@ end
      -- displays the timer
       clockText = display.newText("TimeLeft:" .. secondsLeft,500,600,nil,40)
     clockText:setTextColor(155/255,180/255,1/255)
+
+    -- displays the correctAnswer and makes it invisible
+ CorrectText = display.newText("" , display.contentWidth/4, display.contentHeight/5, nil, 40)
+     questionObject:setTextColor(155/255, 0/255, 0/255)
+     CorrectText.isVisible = false
 
 
  local function AskQuestion()
@@ -184,7 +175,7 @@ if ((correctAnswer < 0) and (randomOperation == 2)) then
 if (randomOperation == 3) then correctAnswer = randomNumber3 * randomNumber4
     -- creates the question in text object and changes the text for the Correct answer
     questionObject.text = randomNumber3 .. " * " .. randomNumber4 .. " = "
-    CorrectText.Text = "The correct answer is:" .. correctAnswer
+    CorrectText.text = "The correct answer is:" .. correctAnswer
 
 end
 if (randomOperation == 4) then answerDivision = randomNumber5 / randomNumber6
@@ -202,10 +193,7 @@ if (randomOperation == 5) then SquareRoot = math.sqrt(randomNumber7)
 end
 end
 
--- displays the correctAnswer and makes it invisible
- CorrectText = display.newText("The correct answer is:" .. correctAnswer , display.contentWidth/4, display.contentHeight/5, nil, 40)
-     questionObject:setTextColor(155/255, 0/255, 0/255)
-     CorrectText.isVisible = false
+
 
 
  
