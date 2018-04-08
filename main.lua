@@ -305,7 +305,7 @@ end
 
 
      -- Create Numeric field
-     numericField = native.newTextField( 500, 350, 150, 30)
+     numericField = native.newTextField( 500, 350, 150, 100)
      numericField.inputType = "number"
 
 -- displays the scorer
